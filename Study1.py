@@ -3,11 +3,29 @@
 # Description : test for SunFoudner DHT11 humiture & temperature module
 # Author      : Alan
 # Website     : www.osoyoo.com
-# Update      : 2017/07/06
+# Update      : 2018/05/16
 ##########################################################################
 import RPi.GPIO as GPIO
 import time
 
+RED = 23
+GREEN = 12
+YELLOW = 16
+
+def setup():
+    GPIO.setwarnings(False)
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(RED,GPIO.OUT,initial=GPIO.LOW)
+    GPIO.setup(GREEN,GPIO.OUT,initial=GPIO.LOW)
+    GPIO.setup(YELLOW,GPIO.OUT,initial=GPIO.LOW)
+
+def light_up(pin):
+    GPIO.output(RED,GPIO.LOW)
+    GPIO.output(YELLOW,GPIO.LOW)
+    GPIO.output(GREEN,GPIO.LOW)
+    GPIO.output(pin,GPIO.HIGH)
+    
+    
 #DHT11 connect to BCM_GPIO14
 DHTPIN = 14
 
@@ -118,6 +136,13 @@ def main():
         result = read_dht11_dat()
         if result:
             humidity, temperature = result
+            discomfort = 0.81*temperature + 0.01*humidity*(0.99*temperature - 14.3) + 46.3
+            if discomfort < 75:
+                light_up(GREEN)
+            elif discomfort < 80:
+                light_up(YELLOW)
+            else :
+                light_up(RED)
             print type(humidity)
         time.sleep(1)
 
