@@ -148,10 +148,14 @@ def main():
         time.sleep(1)
 
 def destroy():
+    GPIO.output(RED, GPIO.LOW)
+    GPIO.output(YELLOW, GPIO.LOW)
+    GPIO.output(GREEN, GPIO.LOW)
     GPIO.cleanup()
 
 if __name__ == '__main__':
     try:
+        setup()
         main()
     except KeyboardInterrupt:
         destroy() 
